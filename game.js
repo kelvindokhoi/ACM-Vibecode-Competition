@@ -191,9 +191,9 @@
 
     // Background
     try {
-      var bg = (typeof makeSprite === 'function')
+      var bg = (typeof makeBackground === 'function' && makeBackground(L.bg, len + 40, 30)) || ((typeof makeSprite === 'function')
         ? makeSprite(L.bg, len + 40, 30, BG_COLORS[L.bg] || 0x223355)
-        : new THREE.Mesh(new THREE.PlaneGeometry(len + 40, 30), new THREE.MeshBasicMaterial({ color: BG_COLORS[L.bg] || 0x223355 }));
+        : new THREE.Mesh(new THREE.PlaneGeometry(len + 40, 30), new THREE.MeshBasicMaterial({ color: BG_COLORS[L.bg] || 0x223355 })));
       bg.position.set(len / 2, 10, -8);
       addObj(bg);
     } catch (e) { console.warn('bg failed', e); }
