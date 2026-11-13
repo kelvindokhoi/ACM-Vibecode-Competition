@@ -5,5 +5,31 @@ Four levels
     2) Themed Challenge: New setting or obstacle like underground tunnel, gym, field
     3) The Gauntlent: Combine challenges, add a new twist
     4) Rival Showdown: End with a boss against a school mascot. Add powerup with visible functionality + visible challenges
+  There must be some kind of collectable power-up the visbly changes the player's use
+  
 
-    
+Everything is one fire. That is the idea. 
+  Campus Dash:
+     - Sutton on Fire. Show MCS3 makerspace, show chemlab
+     - Put out at least 80% of fires before time ends. HP bar (don't touch fire)
+     
+  Themed Challenge:
+     - Add toxic waste from chem lab. Different way to handle it.
+
+  Gauntent:
+     - Do fires AND toxic waste.
+     - Zombies from toxic waste. Avoid.
+
+  Rival: Sewanne (in state rival). Their mascot is Tigers
+     - Tiger is causing this stuff.
+     - Attack the tiger by spraying with fire extinquisher. Cannot touch.
+
+The Powerups:
+     - Fire extinquishers (put out fires, refil by collection)
+     - Vials (for toxic waste, same way)
+     - Red bull powerup. Make them go fast. 
+
+
+Win/Lose:
+     - Win: Clear enough fire / toxic waste
+     - Lose: Take too much damage from hazards or run out of time
