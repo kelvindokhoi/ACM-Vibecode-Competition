@@ -41,3 +41,5 @@ A team may be disqualified for:
     • Reusing code or assets from a previous project. 
 
 Note: The school-logo exception applies only to school logos. Other non-public-domain visual assets are not permitted unless they are AI-generated.
+
+finish everything before 3:40pm today.
