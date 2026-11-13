@@ -114,7 +114,29 @@
 
   function addObj(o) { scene.add(o); levelObjs.push(o); return o; }
 
+  function placeLandmarkModel(text, x) {
+    try {
+      if (typeof MascotModels !== 'function') return;
+      if (!window.__mascotModels) window.__mascotModels = MascotModels(THREE);
+      var M = window.__mascotModels, t = text.toLowerCase(), b = null, hgt = 7;
+      if (t.indexOf('sutton') >= 0) { b = M.sutton; hgt = 8; }
+      else if (t.indexOf('makerspace') >= 0) { b = M.printer3d; hgt = 2.2; }
+      else if (t.indexOf('anderson') >= 0) { b = M.andersonTower; hgt = 11; }
+      else if (t.indexOf('covenant') >= 0) { b = M.covenantStone; hgt = 2.2; }
+      else if (t.indexOf('chem') >= 0 || t.indexOf('hazmat') >= 0) { b = M.labBench; hgt = 2; }
+      if (typeof b !== 'function') return;
+      var model = b();
+      var bb = new THREE.Box3().setFromObject(model), sz = new THREE.Vector3(); bb.getSize(sz);
+      var sc = sz.y > 0 ? hgt / sz.y : 1; model.scale.setScalar(sc);
+      bb = new THREE.Box3().setFromObject(model);
+      var c = new THREE.Vector3(); bb.getCenter(c);
+      model.position.set(x - c.x, -bb.min.y, -5 - c.z);
+      addObj(model);
+    } catch (e) { console.warn('landmark model failed', e); }
+  }
+
   function makeSign(text, x) {
+    placeLandmarkModel(text, x);
     var c = document.createElement('canvas');
     c.width = 512; c.height = 128;
     var g = c.getContext('2d');
