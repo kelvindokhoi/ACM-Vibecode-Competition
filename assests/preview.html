@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asset Preview</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1a0610; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; }
+  #ui { position: fixed; top: 8px; left: 8px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 16px); }
+  button { background: #640A28; color: #fff; border: 2px solid #FF6600; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button.on { background: #FF6600; color: #1a0610; }
+</style>
+</head>
+<body>
+<div id="ui"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="models.js"></script>
+<script>
+  const M = MascotModels(THREE);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+  document.body.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x2a0a18);
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
+  M.lights(scene);
+
+  const items = {
+    'Hero': () => M.hero(),
+    'Hero (run+speed)': () => { const h = M.hero({ speed: true }); h.userData.anim = 'run'; return h; },
+    'Hero (spray)': () => { const g = new THREE.Group(); const h = M.hero(); h.userData.anim = 'spray'; const s = M.spray(); s.position.set(0.45, 0.78, 0.18); g.add(h, s); g.userData.update = t => { h.userData.update(t); s.userData.update(t); }; return g; },
+    'Hero (vial)': () => M.hero({ vial: true }),
+    'Tiger': () => M.tiger(),
+    'Tiger (pounce)': () => { const t = M.tiger(); t.userData.anim = 'pounce'; return t; },
+    'Zombie A': () => M.zombie('a'),
+    'Zombie B': () => M.zombie('b'),
+    'Fire': () => M.fire('large'),
+    'Toxic': () => M.toxic('medium'),
+    'Pickups': () => { const g = new THREE.Group(); const a = [M.extinguisher(), M.vial(), M.drink()]; a.forEach((p, i) => { p.position.x = (i - 1) * 1; g.add(p); }); g.userData.update = t => a.forEach(p => p.userData.update(t)); return g; },
+    'Platform': () => M.platform(4),
+    'Sutton': () => M.sutton(true),
+    'Anderson': () => M.andersonTower(),
+    'Cov. Stone': () => M.covenantStone(),
+    '3D Printer': () => M.printer3d(),
+    'Lab Bench': () => M.labBench(),
+    'Rival Banner': () => M.rivalBanner(),
+  };
+
+  let current = null;
+  const ui = document.getElementById('ui');
+  Object.keys(items).forEach((name, i) => {
+    const b = document.createElement('button');
+    b.textContent = name;
+    b.onclick = () => show(name, b);
+    ui.appendChild(b);
+    if (i === 0) setTimeout(() => show(name, b));
+  });
+  function show(name, btn) {
+    document.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    btn.classList.add('on');
+    if (current) scene.remove(current);
+    current = items[name]();
+    scene.add(current);
+    const box = new THREE.Box3().setFromObject(current);
+    const size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+    const d = Math.max(size.x, size.y) * 1.9 + 1;
+    camera.position.set(c.x + d * 0.35, c.y + d * 0.2, c.z + d);
+    camera.lookAt(c);
+  }
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x3d0618 }));
+  floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+
+  function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
+  addEventListener('resize', resize); resize();
+  const clock = new THREE.Clock();
+  renderer.setAnimationLoop(() => {
+    const t = clock.getElapsedTime();
+    if (current) { current.rotation.y = Math.sin(t * 0.4) * 0.5; current.userData.update(t); }
+    renderer.render(scene, camera);
+  });
+</script>
+</body>
+</html>
