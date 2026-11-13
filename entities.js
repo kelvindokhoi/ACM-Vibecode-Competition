@@ -1,6 +1,31 @@
 // entities.js - Scots on Fire entities (classic script, globals)
 
 function makeSprite(name, w, h, fallbackColor) {
+  // Prefer procedural 3D models from assests/models.js when available.
+  try {
+    if (typeof MascotModels === 'function' && name !== 'spray') {
+      if (!window.__mascotModels) window.__mascotModels = MascotModels(THREE);
+      var M = window.__mascotModels;
+      var builder = M && M[name];
+      if (typeof builder === 'function') {
+        var model = builder();
+        var wrap = new THREE.Group();
+        var bb = new THREE.Box3().setFromObject(model);
+        var sz = new THREE.Vector3(); bb.getSize(sz);
+        var sc = sz.y > 0 ? h / sz.y : 1;
+        model.scale.setScalar(sc);
+        bb = new THREE.Box3().setFromObject(model);
+        var c = new THREE.Vector3(); bb.getCenter(c);
+        model.position.set(-c.x, -c.y, -c.z);
+        wrap.add(model);
+        wrap.userData.baseColor = fallbackColor;
+        wrap.userData.model = model;
+        // Fake material so flash/opacity code keeps working on a Group.
+        wrap.material = { color: { set: function () {} }, opacity: 1, transparent: true, needsUpdate: false };
+        return wrap;
+      }
+    }
+  } catch (e) { console.warn('model build failed for ' + name, e); }
   const geo = new THREE.PlaneGeometry(w, h);
   const mat = new THREE.MeshBasicMaterial({
     color: fallbackColor,
