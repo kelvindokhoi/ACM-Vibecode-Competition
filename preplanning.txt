@@ -1,0 +1,9 @@
+Four levels
+  Beginning, middle, end
+  At least two recognizabnle campus details
+    1) Campus dash: Two recognizable campus details
+    2) Themed Challenge: New setting or obstacle like underground tunnel, gym, field
+    3) The Gauntlent: Combine challenges, add a new twist
+    4) Rival Showdown: End with a boss against a school mascot. Add powerup with visible functionality + visible challenges
+
+    
