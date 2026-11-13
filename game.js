@@ -374,6 +374,37 @@
     camera.lookAt(camera.position.x, camera.position.y - 1.5, 0);
   }
 
+  var lastBossHp = null;
+  function animateModels() {
+    try {
+      var t = performance.now() / 1000, now = Date.now();
+      var p = game.player;
+      if (p && p.mesh && p.mesh.userData.model) {
+        var hm = p.mesh.userData.model.userData;
+        var anim = 'idle';
+        if (now - (p.lastSpray || 0) < 300) anim = 'spray';
+        else if (now < (p.invulnUntil || 0) - 500) anim = 'hurt';
+        else if (Math.abs(p.vx) > 0.5) anim = 'run';
+        hm.anim = anim;
+        if (hm.setState) hm.setState({ speed: now < (p.speedBoostUntil || 0), extinguisher: true, vial: false });
+      }
+      var b = game.boss;
+      if (b && b.mesh && b.mesh.userData.model) {
+        var bm = b.mesh.userData.model.userData;
+        bm.anim = b.alive ? (b.onGround ? 'walk' : 'pounce') : 'stunned';
+        if (lastBossHp !== null && b.hp < lastBossHp) bm.hit = 1;
+        lastBossHp = b.hp;
+      } else lastBossHp = null;
+      var list = window.__animModels || [];
+      for (var i = list.length - 1; i >= 0; i--) {
+        var w = list[i];
+        if (!w.parent) { list.splice(i, 1); continue; }
+        var u = w.userData.model && w.userData.model.userData;
+        if (u && typeof u.update === 'function') u.update(t);
+      }
+    } catch (e) { if (!window.__animWarned) { window.__animWarned = true; console.warn('animateModels', e); } }
+  }
+
   function loop() {
     requestAnimationFrame(loop);
     var dt = Math.min(0.05, clock.getDelta());
@@ -387,6 +418,7 @@
     } catch (e) {
       if (!loggedFrameErr) { console.error('frame error', e); loggedFrameErr = true; }
     }
+    animateModels();
     renderer.render(scene, camera);
   }
 

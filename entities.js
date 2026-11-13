@@ -20,6 +20,7 @@ function makeSprite(name, w, h, fallbackColor) {
         wrap.add(model);
         wrap.userData.baseColor = fallbackColor;
         wrap.userData.model = model;
+        (window.__animModels = window.__animModels || []).push(wrap);
         // Fake material so flash/opacity code keeps working on a Group.
         wrap.material = { color: { set: function () {} }, opacity: 1, transparent: true, needsUpdate: false };
         return wrap;
